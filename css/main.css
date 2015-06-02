@@ -5,3 +5,7 @@
 #login {
   float: right;
 }
+
+nav {
+  clear: both;
+}
