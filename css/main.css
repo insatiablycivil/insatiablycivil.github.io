@@ -1,1 +1,7 @@
+.header {
+  float: left;
+}
 
+#login {
+  float: right;
+}
