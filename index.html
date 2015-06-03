@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="/css/normalize.css">
 		<link rel="stylesheet" href="/css/main.css">
 		<script src="board.js"></script>
+		<script src="canvasui.js"></script>
 	</head>
 	
 	<body>
@@ -33,7 +34,21 @@
 	    		</div><!-- /.intro -->
 			<div class="game">
 				<h2>The Game...</h2>
-				<canvas id="gomoku">If you can see this text, it means that your browser does not support the HTML5 Canvas element.</canvas>
+				<canvas id="gomoku">
+					If you can see this text, it means that your browser does not support the HTML5 Canvas element.
+				</canvas>
+				<script>
+					var canvas = document.getElementById('checkers');
+					var predictor = document.getElementById('predictor');
+					var ui = new CanvasCheckers(canvas, predictor, 8, 8);
+					var game = new Checkers.Game(ui);
+					game.start();
+					function switchSides() {
+					    document.getElementById('red').innerHTML = 'Red: Your Browser';
+					    document.getElementById('blue').innerHTML = 'Human: (you!)';
+					    ui.switchSides();
+					}
+				</script>
 			</div><!-- /.intro -->
 		</div><!-- /.container -->
 		<footer>
