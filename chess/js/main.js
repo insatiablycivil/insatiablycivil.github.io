@@ -1,8 +1,19 @@
 $(function() {
 	init();
 	console.log("Main Init Called");
-	ParseFen(START_FEN);
-	PrintBoard();
+	NewGame(START_FEN);
+	//ParseFen(START_FEN);
+	//PrintBoard();
+	//GenerateMoves();
+	//PrintMoveList();
+	//PrintPieceList();
+	//CheckBoard();
+	//MakeMove(GameBoard.moveList[0]); // temp
+	//PrintBoard();
+	//CheckBoard();
+	//TakeMove();
+	//PrintBoard();
+	//CheckBoard();	
 });
 
 function InitFilesRanksBrd() {
@@ -65,9 +76,60 @@ function InitSq120to64() {
 	}
 }
 
+function InitBoardVars() {
+	var index = 0;
+
+	for (index = 0; index < MAXGAMEMOVES; ++index) {
+		GameBoard.history.push( {
+			move : NOMOVE,
+			castlePerm : 0,
+			enPas : 0,
+			fiftyMove : 0,
+			posKey : 0,
+		});
+	}
+
+	for (index = 0; index < PVENTRIES; ++index) { 
+		GameBoard.PvTable.push({
+			move : NOMOVE,
+			posKey : 0
+		});
+	}
+}
+
+function InitBoardSquares() {
+	var light = 1;
+	var rankName;
+	var fileName;
+	var divString;
+	var rankIter;
+	var fileIter;
+	var lightString;
+
+	for (rankIter = RANKS.RANK_8; rankIter >= RANKS.RANK_1; rankIter--) {
+		light ^= 1;
+		rankName = "rank" + (rankIter + 1);
+		for (fileIter = FILES.FILE_A; fileIter <= FILES.FILE_H; fileIter++) {
+			fileName = "file" + (fileIter + 1);
+			if (light == 0) {
+				lightString = "Light";
+			}
+			else {
+				lightString = "Dark";
+			}
+			light ^= 1;
+			divString = "<div class=\"Square " + rankName + " " + fileName + " " + lightString + "\"/>";
+			$("#Board").append(divString);
+		}
+	}
+}
+
 function init() {
 	console.log("init() called");
 	InitFilesRanksBrd();
 	InitHashKeys();
 	InitSq120to64();
+	InitBoardVars();
+	InitMvvLva();
+	InitBoardSquares();
 }

@@ -22,6 +22,9 @@ var BOOL = { FALSE : 0, TRUE : 1};
 var MAXGAMEMOVES = 2048;
 var MAXPOSITIONMOVES = 256;
 var MAXDEPTH = 64;
+var INFINITE = 30000;
+var MATE = 29000;
+var PVENTRIES = 10000;
 
 var FilesBrd = new Array(BRD_SQ_NUM);
 var RanksBrd = new Array(BRD_SQ_NUM);
@@ -74,6 +77,18 @@ var RkDir = [ -1, -10, 1, 10 ];
 var BiDir = [ -9, -11, 11, 9 ];
 var KiDir = [ -1, -10, 1, 10, -9, -11, 11, 9 ];
 
+var DirNum = [ 0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8 ];
+
+var PieceDir = [ 0, 0, KnDir, BiDir, RkDir, KiDir, KiDir, 0, KnDir, BiDir, RkDir, KiDir, KiDir ];
+
+var LoopNonSlidePiece = [ PIECES.wN, PIECES.wK, 0, PIECES.bN, PIECES.bK, 0 ];
+
+var LoopNonSlideIndex = [ 0, 3 ];
+
+var LoopSlidePiece = [ PIECES.wB, PIECES.wR, PIECES.wQ, 0, PIECES.bB, PIECES.bR, PIECES.bQ, 0 ];
+
+var LoopSlideIndex = [ 0, 4 ];
+
 var PieceKeys = new Array(14 * 120);
 
 var SideKey;
@@ -87,8 +102,16 @@ function RAND_32() {
 
 	return (Math.floor((Math.random()*255)+1) << 23) | (Math.floor((Math.random()*255)+1) << 16) | 
 		   (Math.floor((Math.random()*255)+1) << 8) | (Math.floor((Math.random()*255)+1) << 1) ;
-
 }
+
+var Mirror64 = [ 56, 57, 58, 59, 60, 61, 62, 63,
+				 48, 49, 50, 51, 52, 53, 54, 55,
+				 40, 41, 42, 43, 44, 45, 46, 47,
+				 32, 33, 34, 35, 36, 37, 38, 39,
+				 24, 25, 26, 27, 28, 29, 30, 31,
+				 16, 17, 18, 19, 20, 21, 22, 23,
+				  8,  9, 10, 11, 12, 13, 14, 15,
+				  0,  1,  2,  3,  4,  5,  6,  7  ];
 
 function SQ64(sq120) {
 	return Sq120to64[sq120];
@@ -101,3 +124,84 @@ function SQ120(sq64) {
 function PIECEINDEX(piece, pieceNum) {
 	return (piece * 10 + pieceNum);
 }
+
+function MIRROR64(sq) {
+	return Mirror64[sq];
+}
+
+var Kings = [PIECES.wK, PIECES.bK];
+
+var CastlePerm = [ 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 13, 15, 15, 15, 12, 15, 15, 14, 15,			   
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15,  7, 15, 15, 15,  3, 15, 15, 11, 15,				   
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+				   15, 15, 15, 15, 15, 15, 15, 15, 15, 15  ];
+
+function FROMSQ(move) {
+	return (move & 0x7F);
+}
+
+function TOSQ(move) {
+	return ((move >> 7) & 0x7F);
+}
+
+function CAPTURED(move) {
+	return ((move >> 14) & 0xF);
+}
+
+function PROMOTED(move) {
+	return ((move >> 20) & 0xF);
+}
+
+var MOVEFLAGEP = 0x40000;
+
+var MOVEFLAGPS = 0x80000;
+
+var MOVEFLAGCA = 0x1000000;
+
+var MOVEFLAGCAP = 0x7C000;
+
+var MOVEFLAGPROM = 0xF00000;
+
+var NOMOVE = 0;
+
+function SQOFFBOARD(sq) {
+	if (FilesBrd[sq] == SQUARES.OFFBOARD) {
+		return BOOL.TRUE;
+	}
+	else {
+		return BOOL.FALSE;
+	}
+}
+
+function HASH_PIECE(piece, sq) {
+	GameBoard.posKey ^= PieceKeys[(piece * 120) + sq];
+}
+
+function HASH_CA() {
+	GameBoard.posKey ^= CastleKeys[GameBoard.castlePerm];
+}
+
+function HASH_SIDE() {
+	GameBoard.posKey ^= SideKey;
+}
+
+function HASH_EP() {
+	GameBoard.posKey ^= PieceKeys[GameBoard.enPas];
+}
+
+var GameController = {};
+GameController.EngineSide = COLOURS.BOTH;
+GameController.PlayerSide = COLOURS.BOTH;
+GameController.GameOver = BOOL.FALSE;
+
+var UserMove = {};
+UserMove.from = SQUARES.NO_SQ;
+UserMove.to = SQUARES.NO_SQ;
