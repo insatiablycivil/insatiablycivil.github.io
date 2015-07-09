@@ -12,15 +12,24 @@
 		<header>
 			<h3>JS Gomoku</h3>
 		</header>
-		<div>
-			<canvas id="canvas" width="800" height="800">
+		<div style="position: relative;">
+			<canvas id="canvasMenu" width="800" height="800"
+					style="position: absolute; left: 0; top: 0; z-index: 2;">>
 				Your browser does support the canvas feature in javascript.\n
 				Please try a different browser.
 			</canvas>
+			<canvas id="canvasPieces" width="800" height="800"
+					style="position: absolute; left: 0; top: 0; z-index: 1;">>
+			</canvas>
+			<canvas id="canvasBoard" width="800" height="800"
+					style="position: absolute; left: 0; top: 0; z-index: 0;">>
+			</canvas>
 		</div>
 		<script src="js/jquery-1.11.3.min.js"></script>
-		<script src="js/defs.js"></script>
+		<script src="js/definitions.js"></script>
+		<script src="js/gameBoard.js"></script>
+		<script src="js/gameMenu.js"></script>
 		<script src="js/main.js"></script>
-		<script src="js/canvas.js"></script>
+
 	</body>
 </html>

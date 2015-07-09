@@ -1,4 +1,11 @@
 //"use strict";
+var gameCanvas2 = document.getElementById("canvasMenu");
+var gameContext2 = gameCanvas2.getContext('2d');
+gameContext2.fillStyle = 'orange';
+gameContext2.fillRect(0, 0, 750, 750);
+
+
+
 
 var gameCanvas = document.getElementById("canvas");
 var gameContext = gameCanvas.getContext('2d');
@@ -7,6 +14,7 @@ var turn = 'black';
 var moves = []; // Contains list of squares that have been moved upon
 var squares = []; // Contains list of all squares
 var valid = false; // Toggles if mouse is clicked when on canvas
+var menuUp = true;
 
 function getSquare(named) {
     // Is given a named and cycles through moves searching for a match
@@ -63,18 +71,79 @@ function populate() {
     for (i = 0; i < squares.length; i += 1) {
         fillSquare(squares[i]);
     }
+    fillGrid(null);
+}
+
+function fillGrid(square) {
+    var x;
+    var y;
+
+    var bufferX;
+    var bufferY;
+
+    if (square === null) {
+        gameContext.fillStyle = 'brown';
+        gameContext.fillRect(0, 0, 750, 750);
+        gameContext.lineWidth = 2;
+        gameContext.strokeStyle = 'white';
+        gameContext.beginPath();
+        for (x = 25; x < 726; x += 50) {
+            gameContext.moveTo(x, 25);
+            gameContext.lineTo(x, 725);
+        }
+        for (y = 25; y < 726; y += 50) {
+            gameContext.moveTo(25, y);
+            gameContext.lineTo(725, y);
+        }
+    } else {
+        gameContext.lineWidth = 2;
+        gameContext.strokeStyle = 'white';
+        gameContext.beginPath();
+
+        if (square.x === 0) {
+            bufferX = 25;
+        } else if (square.x === 700) {
+            bufferX = 0;
+        }
+        if (bufferX !== undefined) {
+            gameContext.moveTo(square.x + bufferX, square.y + 25);
+            gameContext.lineTo(square.x + bufferX + 25, square.y + 25);
+        } else {
+            gameContext.moveTo(square.x, square.y + 25);
+            gameContext.lineTo(square.x + 50, square.y + 25);
+        }
+
+        if (square.y === 0) {
+            bufferY = 25;
+        } else if (square.y === 700) {
+            bufferY = 0;
+        }
+        if (bufferY !== undefined) {
+            gameContext.moveTo(square.x + 25, square.y + bufferY);
+            gameContext.lineTo(square.x + 25, square.y + bufferY + 25);
+        } else {
+            gameContext.moveTo(square.x + 25, square.y);
+            gameContext.lineTo(square.x + 25, square.y + 50);
+        }
+    }
+    gameContext.stroke();
 }
 
 function fillSquare(square) {
     // Is given a square and will draw it on canvas
+    gameContext.beginPath();
+    gameContext.arc(square.x + square.w / 2, square.y + square.w / 2, square.w / 2, 0, 2 * Math.PI, false);
     if (square.ownedBy !== null) {
         gameContext.fillStyle = square.ownedBy;
+        gameContext.fill();
     } else if (square.active === true) {
         gameContext.fillStyle = 'yellow';
+        gameContext.fill();
     } else {
-        gameContext.fillStyle = square.defaultState;
+        gameContext.fillStyle = 'brown';
+        gameContext.fill();
+        fillGrid(square);
     }
-    gameContext.fillRect(square.x, square.y, square.w, square.h);
 }
 
 function resetSquares() {
@@ -140,9 +209,9 @@ function checkEnd(square) {
                             return true;
                         }
                     } else {
-                        // **NOT WORKING** // if (named !== null && chain === 3) {
-                        // **NOT WORKING** //   console.log("end is nigh")
-                        // **NOT WORKING** // }
+                                        // **NOT WORKING** // if (named !== null && chain === 3) {
+                                        // **NOT WORKING** //   console.log("end is nigh")
+                                        // **NOT WORKING** // }
                         modifier -= 5;
                         steps -= 1;
                         // Goes back 5 steps along same direction if it reaches dead end
@@ -175,15 +244,68 @@ function makeMove(square) {
             console.log("Game On...");
         }
     }
-    turn = ((turn === 'black') ? 'pink' : 'black');
+    turn = ((turn === 'black') ? 'white' : 'black');
+}
+
+function generateMenu() {
+    gameContext.fillStyle = 'rgba(0,0,0,0.7)';
+    gameContext.fillRect(0, 0, 750, 750);
+
+    gameContext.fillStyle = 'rgba(0,0,0,0.2)';
+    gameContext.fillRect(0, 150, 750, 25);
+    gameContext.fillStyle = 'purple';
+    gameContext.fillRect(0, 0, 750, 150);
+
+    gameContext.fillStyle = 'rgba(0,0,0,0.2)';
+    gameContext.fillRect(150, 250, 500, 100);
+    gameContext.fillStyle = 'white';
+    gameContext.fillRect(125, 225, 500, 100);
+
+    gameContext.fillStyle = 'rgba(0,0,0,0.2)';
+    gameContext.fillRect(150, 425, 500, 100);
+    gameContext.fillStyle = 'white';
+    gameContext.fillRect(125, 400, 500, 100);
+
+    gameContext.fillStyle = 'rgba(0,0,0,0.2)';
+    gameContext.fillRect(150, 600, 500, 100);
+    gameContext.fillStyle = 'white';
+    gameContext.fillRect(125, 575, 500, 100);
 }
 
 populate();
+generateMenu();
 
 gameCanvas.addEventListener('mousedown', mouseDownListener, false);
 gameCanvas.addEventListener('mouseup', mouseUpListener, false);
 
 function mouseDownListener(e) {
+    if (menuUp === true) {
+        menuMouseDown(e);
+    } else {
+        gameMouseDown(e);
+    }
+}
+
+function mouseUpListener(e) {
+    if (menuUp === true) {
+        menuMouseUp(e);
+    } else {
+        gameMouseUp(e);
+    }
+}
+
+function mouseMoveListener(e) {
+    if (menuUp === true) {
+        menuMouseMove(e);
+    } else {
+        gameMouseMove(e);
+    }
+}
+
+
+
+
+function gameMouseDown(e) {
     var mouseLocation;
     var i;
     var squareHit = false;
@@ -206,7 +328,7 @@ function mouseDownListener(e) {
     }
 }
 
-function mouseUpListener(e) {
+function gameMouseUp(e) {
     var mouseLocation;
     var i;
     if (valid === true) {
@@ -226,7 +348,7 @@ function mouseUpListener(e) {
     }
 }
 
-function mouseMoveListener(e) {
+function gameMouseMove(e) {
     var mouseLocation;
     var i;
     var squareHit = false;
@@ -236,9 +358,11 @@ function mouseMoveListener(e) {
         if (squares[i].checkColliding(mouseLocation) === true) {
             if (squares[i].defaultState !== 'black') {
                 squareHit = true;
-                console.log("You Hit : ", squares[i].named);
-                squares[i].active = true;
-                fillSquare(squares[i]);
+                if (squares[i].active === false) {
+                    console.log("You Hit : ", squares[i].named);
+                    squares[i].active = true;
+                    fillSquare(squares[i]);
+                }
             } else {
                 squareHit = true;
                 console.log("Space Taken Already!");
