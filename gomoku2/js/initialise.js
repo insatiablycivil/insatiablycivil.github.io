@@ -1,1 +1,1 @@
-GomokuGame.initialise();
+setTimeout("Globals.initialise()", 500);
