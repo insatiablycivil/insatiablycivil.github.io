@@ -26,7 +26,8 @@ var Globals = (function() {
     };
 
     Globals.gameActive = false;
-    Globals.BlacktoMove = true;
+    Globals.blacktoMove = true;
+    Globals.aiSide = [true, true];
 
     Globals.initialise = function() {
 
@@ -42,6 +43,7 @@ var Globals = (function() {
             document.getElementsByTagName('head')[0].appendChild(link);
         }());
         setTimeout("GomokuGame.initialise()", 5);
+        GomokuGame.ai.initialise(14, 14);
     };
 
     Globals.mouseDownListener = function(e) {
@@ -66,6 +68,21 @@ var Globals = (function() {
 
     Globals.mouseMoveListener = function(e) {
         var mouse = getMouseLocation(e);
+    };
+
+    Globals.checkCollision = function(item, mouse) {
+        if (isNaN(item.hbx) || isNaN(item.hby) || isNaN(item.hbw) || isNaN(item.hbh)) {
+            console.log("Error: Invalid Hitbox Dimensions\n\'hbx\', \'hby\', \'hbw\' and \'hbh\' must all be numbers.");
+        }
+        if (isNaN(mouse.x) || isNaN(mouse.y)) {
+            console.log("Error: Invalid Mouse Location\n\'mouse.x\' and \'mouse.y\' must be numbers.");
+            return null;
+        }
+        if (mouse.x >=  item.hbx && mouse.x <= item.hbx + item.hbw &&
+            mouse.y >=  item.hby && mouse.y <= item.hby + item.hbh) {
+            return true;
+        }
+        return false;
     };
 
     Globals.createDecor = function(name, shape, context, x, y, w, h, colour, linew, lineColour) {
@@ -94,22 +111,13 @@ var Globals = (function() {
     };
 
     Globals.createPiece = function(name, x, y, w, h, colour, linew, lineColour, hbx, hby, hbw, hbh) {
-        var item = {};
+        var item = Globals.createDecor(name, "circle", contentContext, x, y, w, h, colour, linew, lineColour);
 
-        if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h) || isNaN(linew)) {
-            console.log("Error: Invalid Dimensions\n\'x\', \'y\', \'w\', \'h\' and \'linew\' must all be numbers.");
+        if (isNaN(hbx) || isNaN(hby) || isNaN(hbw) || isNaN(hbh)) {
+            console.log("Error: Invalid Dimensions\n\'hbx\', \'hby\', \'hbw\' and \'hbh\' must all be numbers.");
             return;
         }
-        item.name = name;
-        item.shape = "circle";
-        item.context = contentContext;
-        item.x = x;
-        item.y = y;
-        item.w = w;
-        item.h = h;
-        item.colour = colour;
-        item.linew = linew;
-        item.lineColour = lineColour;
+
         item.hbx = hbx;
         item.hby = hby;
         item.hbw = hbw;
@@ -119,13 +127,10 @@ var Globals = (function() {
     };
 
     Globals.createButton = function(name, shape, context, x, y, w, h, colour, linew, lineColour, hbx, hby, hbw, hbh, active) {
-        var item = {};
+        var item = Globals.createDecor(name, shape, context, x, y, w, h, colour, linew, lineColour);
 
-        if (shape !== "rectangle" && shape !== "circle") {
-            console.log("Error: Invalid Shape\nMust be either: \'rectangle\', \'circle\'.");
-        }
-        if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h) || isNaN(linew)) {
-            console.log("Error: Invalid Dimensions\n\'x\', \'y\', \'w\', \'h\' and \'linew\' must all be numbers.");
+        if (isNaN(hbx) || isNaN(hby) || isNaN(hbw) || isNaN(hbh)) {
+            console.log("Error: Invalid Dimensions\n\'hbx\', \'hby\', \'hbw\' and \'hbh\' must all be numbers.");
             return;
         }
         if (typeof active !== 'boolean') {
@@ -133,16 +138,6 @@ var Globals = (function() {
             return;
         }
 
-        item.name = name;
-        item.shape = shape;
-        item.context = context;
-        item.x = x;
-        item.y = y;
-        item.w = w;
-        item.h = h;
-        item.colour = colour;
-        item.linew = linew;
-        item.lineColour = lineColour;
         item.hbx = hbx;
         item.hby = hby;
         item.hbw = hbw;
@@ -171,19 +166,12 @@ var Globals = (function() {
         }
     };
 
-    Globals.checkCollision = function(item, mouse) {
-        if (isNaN(item.hbx) || isNaN(item.hby) || isNaN(item.hbw) || isNaN(item.hbh)) {
-            console.log("Error: Invalid Hitbox Dimensions\n\'hbx\', \'hby\', \'hbw\' and \'hbh\' must all be numbers.");
+    Globals.promptAI = function(column, row) {
+        if (Globals.blacktoMove === true) {
+            GomokuGame.ai.makeMove(column, row, 1);
+        } else {
+            GomokuGame.ai.makeMove(column, row, 0);
         }
-        if (isNaN(mouse.x) || isNaN(mouse.y)) {
-            console.log("Error: Invalid Mouse Location\n\'mouse.x\' and \'mouse.y\' must be numbers.");
-            return null;
-        }
-        if (mouse.x >=  item.hbx && mouse.x <= item.hbx + item.hbw &&
-            mouse.y >=  item.hby && mouse.y <= item.hby + item.hbh) {
-            return true;
-        }
-        return false;
     };
 
     return Globals;

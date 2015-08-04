@@ -37,13 +37,13 @@ GomokuGame.contentLayer = (function() {
         var locationX;
         var locationY;
         var modifier = 0;
-        var chain = 1;
+        var chain = 0;
 
         console.log("\n\nPlace at: " + column + ", " + row);
 
-        for (xDir = -1; xDir < 2; xDir += 1) {
+        for (xDir = 0; xDir <= 1; xDir += 1) {
             // Cycling through x direction
-            for (yDir = -1; yDir < 2; yDir += 1) {
+            for (yDir = 0; yDir <= 1; yDir += 1) {
                 // Cycling through y direction
                 console.log("Direction is: " + xDir + ", " + yDir);
                 if (!(xDir === 0 && yDir === 0)) {
@@ -88,7 +88,7 @@ GomokuGame.contentLayer = (function() {
                     }
                 }
             }
-        }  
+        }
     };
 
     contentLayer.checkCollision = function(mouse) {
@@ -117,7 +117,7 @@ GomokuGame.contentLayer = (function() {
                 }
             }
             if (pieceHit === false) {
-                if (Globals.BlacktoMove === true) {
+                if (Globals.blacktoMove === true) {
                     colour = black;
                 } else {
                     colour = orange;
@@ -133,12 +133,17 @@ GomokuGame.contentLayer = (function() {
                 moves.push(pieces[column][row]);
                 Globals.draw(pieces[column][row]);
                 if (moves.length >= 9) {
-                    if (checkEnd(pieces[column][row], column, row) == true) {
+                    if (checkEnd(pieces[column][row], column, row) === true) {
                         Globals.gameActive = false;
                         GomokuGame.uiLayer.gameOver();
                     }
                 }
-                Globals.BlacktoMove = !Globals.BlacktoMove;
+                Globals.blacktoMove = !Globals.blacktoMove;
+                if ((Globals.blacktoMove === true && Globals.aiSide[0] === true) ||
+                    (Globals.blacktoMove === false && Globals.aiSide[1] === true)) {
+                    console.log(column, row)
+                        Globals.promptAI(column, row);
+                    }
             }
         }
     };
