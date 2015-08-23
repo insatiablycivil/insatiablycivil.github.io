@@ -1,0 +1,211 @@
+GomokuGame.ai = (function() {
+    var ai = {};
+
+    var board = [];
+    depth = 0;
+
+    var updateBoard = function(move) {
+        var i;
+        var j;
+        var k;
+
+        var modifiers = [9, 27, 81, 3, 1];
+        // __X__, ___X_, ____X, _X___, X____
+
+        var direction = [[-1, 1, 1, -1], // direction: /
+                         [-1, 0, 1, 0],  // direction: __
+                         [-1, -1, 1, 1], // direction: \
+                         [0, -1, 0, 1]]; // direction: |
+
+        if (board[move.row][move.column] !== null) {
+            // Checks that spot is empty
+
+            for (i = 0; i <= 3; i += 1) {
+                // Looping through directions and accessing correct array direction 
+
+                
+                if (((board[move.row][move.column][i] % 2 === 1 ||
+                        board[move.row][move.column][i] === 4 ||
+                        board[move.row][move.column][i] === 10 ||
+                        board[move.row][move.column][i] === 12 ||
+                        board[move.row][move.column][i] === 28 ||
+                        board[move.row][move.column][i] === 30 ||
+                        board[move.row][move.column][i] === 36 ||
+                        board[move.row][move.column][i] === 82 ||
+                        board[move.row][move.column][i] === 84 ||
+                        board[move.row][move.column][i] === 108) &&
+                        move.colour === 1) ||
+                    (board[move.row][move.column][i] !== 0 &&
+                        move.colour === 0)) {
+
+                    board[move.row][move.column][i] = null;
+                    // This space is polluted
+
+                } else {
+                    board[move.row][move.column][i] +=
+                        modifiers[0] + move.colour;
+                }
+
+
+// ADD SCORING HERE
+
+
+                    if (board[move.row][move.column][i] === 121 ||
+                        board[move.row][move.column][i] === 242) {
+                        // GAME HAS ENDED
+
+
+// HERE!!
+
+
+                    }
+                }
+                // Adds score to square's own spot (middle spot)
+
+                for (j = 1; j <= 2; j += 1) {
+                    // Looping through steps and accessing correct modifier value
+                    for (k = 0; k <= 1; k += 1) {
+                        // Looping through left and right side of direction
+
+                        if (board[move.column + (direction[i][0 + (2 * k)] * j)]
+                            [move.row + (direction[i][1 + (2 * k)] * j)] !== null) {
+                            // Checks that spot is empty
+
+                            if ((board[move.column + (direction[i][0 + (2 * k)] * j)]
+                                    [move.row + (direction[i][1 + (2 * k)] * j)][i] < 0
+                                    && move.colour === 1) ||
+                                (board[move.column + (direction[i][0] * j)]
+                                    [move.row + (direction[i][1 + (2 * k)] * j)][i] > 0
+                                    && move.colour === 0)) {
+
+                                board[move.row][move.column][i] = null;
+                                // This space is polluted
+
+                            } else {
+                                board[move.column + (direction[i][0 + (2 * k)] * j)]
+                                [move.row + (direction[i][1 + (2 * k)] * j)][i] +=
+                                modifiers[j + k] + move.colour;
+
+// ADD SCORING HERE
+
+                                if (Math.abs(board[move.column +
+                                    (direction[i][0 + (2 * k)] * j)][move.row +
+                                    (direction[i][1 + (2 * k)] * j)][i]) === 31) { // THIS NEEDS TWEEKING
+                                    // GAME HAS ENDED
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // INVALID MOVE
+        }
+        
+        
+
+    };
+
+    ai.makeMove = function(column, row, colour) {
+        var i;
+        var j;
+        var height = board.length - 1;
+        var width = board[0].length - 1;
+        var line;
+        var currentScore;
+        var topScores = [[0]];
+        var move = {
+            column: column,
+            row: row,
+            colour: colour
+        };
+
+        updateBoard(move);
+    };
+
+    ai.initialise = function(columns, rows, depth) {
+        // Sets up the board to specified size
+        var i;
+        var square = 0;
+        var row = [];
+
+        for (i = 0; i <= rows; i += 1) {
+            row =  [];
+            for (j = 0; j <= columns; j += 1) {
+                row.push([0,0,0,0,0]);
+                // Directions (/, __, \, |, score)  
+            }
+            board.push(row);
+        }
+    };
+
+    return ai;
+}());
+
+
+
+    // var getScore = function(move) {
+    //     var i;
+
+    //     if (board[move.column][move.row] !== null) {
+    //         //console.log(move.column, move.row)
+    //         //console.log(board[move.column][move.row] )
+    //         if (board[move.column][move.row][4] !== null) {
+
+    //             board[move.column][move.row][4] = 0;
+
+    //             for (i = 0; i <= 3; i += 1) {
+    //                 if (Math.abs(board[move.column][move.row][i]) === 4 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 5 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 6 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 12 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 20 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 7 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 14 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 28 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 15 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 30) {
+    //                     board[move.column][move.row][4] = null;
+    //                 } else if (board[move.column][move.row][i] === 0 ) {
+    //                     board[move.column][move.row][4] += 7;
+    //                 } else if (Math.abs(board[move.column][move.row][i]) === 1 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 2 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 8 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 16) {
+    //                     if (board[move.column][move.row][i] > 0) {
+    //                         board[move.column][move.row][4] += 35;
+    //                     } else {
+    //                         board[move.column][move.row][4] += 15;
+    //                     }
+    //                 } else if (Math.abs(board[move.column][move.row][i]) === 3 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 9 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 17 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 10 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 18 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 24) {
+    //                     if (board[move.column][move.row][i] > 0) {
+    //                         board[move.column][move.row][4] += 800;
+    //                     } else {
+    //                         board[move.column][move.row][4] += 400;
+    //                     }
+    //                 } else if (Math.abs(board[move.column][move.row][i]) === 11 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 19 ||
+    //                     Math.abs(board[move.column][move.row][i]) === 26) {
+    //                     if (board[move.column][move.row][i] > 0) {
+    //                         board[move.column][move.row][4] += 15000;
+    //                     } else {
+    //                         board[move.column][move.row][4] += 1800;
+    //                     }
+    //                 } else if (Math.abs(board[move.column][move.row][i]) === 27) {
+    //                     if (board[move.column][move.row][i] > 0) {
+    //                         board[move.column][move.row][4] += 800000;
+    //                     } else {
+    //                         board[move.column][move.row][4] += 100000;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         return board[move.column][move.row][4];
+    //     }
+    //     return "NA";
+    // };
