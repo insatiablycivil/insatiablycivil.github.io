@@ -60,7 +60,7 @@ var Globals = (function() {
         if (Globals.gameActive === true &&
             mouse.x >= 40 && mouse.x <= 340 &&
             mouse.y >= 140 && mouse.y <= 440 ) {
-            GomokuGame.contentLayer.checkCollision(mouse, false);
+            GomokuGame.contentLayer.checkCollision(mouse);
         }
         GomokuGame.uiLayer.checkCollision(mouse);
     };
@@ -71,11 +71,6 @@ var Globals = (function() {
 
     Globals.mouseMoveListener = function(e) {
         var mouse = getMouseLocation(e);
-        if (Globals.gameActive === true &&
-            mouse.x >= 40 && mouse.x <= 340 &&
-            mouse.y >= 140 && mouse.y <= 440 ) {
-            GomokuGame.contentLayer.checkCollision(mouse, true);
-        }
     };
 
     Globals.checkCollision = function(item, mouse) {

@@ -398,6 +398,8 @@ GomokuGame.uiLayer = (function() {
     };
 
     var displayEndGame = function(colour) {
+        uiContext.clearRect(0, 100, 380, uiCanvas.height - 160);
+
         Globals.draw(uiElements['greyOut']);
         Globals.draw(uiElements['nameHeader']);
         Globals.draw(uiElements['nameBg']);
@@ -483,6 +485,7 @@ GomokuGame.uiLayer = (function() {
 
     uiLayer.gameOver = function(colour) {
         // Creates Game Over message
+        uiContext.clearRect(0, 100, 380, uiCanvas.height - 160);
         displayEndGame(colour);
     };
 
