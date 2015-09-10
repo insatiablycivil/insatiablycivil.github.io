@@ -447,7 +447,7 @@ GomokuGame.uiLayer = (function() {
         uiContext.fillText("Hello! Click to Play", 60, 290);
         uiContext.fillText("Instructions are on the right.", 60, 310);
 
-        uiContext.font = 'bold 14px Roboto';
+        uiContext.font = '14px Roboto';
         uiContext.textAlign = 'right';
         uiContext.fillStyle = 'rgba(255, 152, 0, 1)';
         uiContext.fillText("CONTINUE", 340, 345);
