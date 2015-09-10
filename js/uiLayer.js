@@ -4,6 +4,7 @@ GomokuGame.uiLayer = (function() {
     var uiContext = uiCanvas.getContext('2d');
     var uiElements = {};
     var uiButtons = {};
+    var flag = false;
 
     var createHowToPlay = (function() {
         // Creates how to play section on right side
@@ -398,12 +399,13 @@ GomokuGame.uiLayer = (function() {
 
     var displayEndGame = function(colour) {
         Globals.draw(uiElements['greyOut']);
-        Globals.draw(uiElements['greyOut']);
         Globals.draw(uiElements['nameHeader']);
         Globals.draw(uiElements['nameBg']);
 
         Globals.draw(uiButtons['again']);
         uiButtons['again'].active = true;
+        Globals.draw(uiButtons['change']);
+        uiButtons['change'].active = true;
 
         uiContext.font = '20px Roboto';
         uiContext.textAlign = 'left';
@@ -417,24 +419,32 @@ GomokuGame.uiLayer = (function() {
 
         uiContext.fillText("Congratulations " + colour + "!", 35, 243);
 
-        uiContext.font = 'bold 14px Roboto';
+        uiContext.font = '14px Roboto';
         uiContext.textAlign = 'left';
         uiContext.fillStyle = 'rgba(0, 0, 0, .54)';
         uiContext.fillText("You Win!", 60, 290);
-        uiContext.fillText("Click to Play Again", 60, 310);
+        uiContext.fillText("Click New Game to change settings", 60, 315);
 
-        uiContext.font = 'bold 14px Roboto';
+        uiContext.font = '14px Roboto';
         uiContext.textAlign = 'right';
         uiContext.fillStyle = 'rgba(255, 152, 0, 1)';
-        uiContext.fillText("Play Again", 340, 345);        
+        uiContext.fillText("New Game", 110, 355);
+        uiContext.fillText("Play Again", 340, 355);
+        Globals.blacktoMove = true;
     };
 
     var displayWelcome = function() {
         Globals.draw(uiElements['greyOut']);
         Globals.draw(uiElements['nameHeader']);
-        Globals.draw(uiElements['nameBg']);
+        Globals.draw(uiElements['nameBigBg']);
+        Globals.draw(uiElements['AIrOff']);
+        Globals.draw(uiElements['AIcOffa']);
+        Globals.draw(uiElements['AIcOffb']);
 
         Globals.draw(uiButtons['continue']);
+        uiButtons['continue'].active = true;
+        Globals.draw(uiButtons['AI']);
+        uiButtons['AI'].active = true;
 
         uiContext.font = '20px Roboto';
         uiContext.textAlign = 'left';
@@ -444,13 +454,15 @@ GomokuGame.uiLayer = (function() {
         uiContext.font = '14px Roboto';
         uiContext.textAlign = 'left';
         uiContext.fillStyle = 'rgba(0, 0, 0, 0.54)';
-        uiContext.fillText("Hello! Click to Play", 60, 290);
-        uiContext.fillText("Instructions are on the right.", 60, 310);
+        uiContext.fillText("Hello!", 40, 290);
+        uiContext.fillText("Please choose your opponent:", 40, 320);
+        uiContext.fillText("Play Against AI:", 40, 360);
+        uiContext.fillText("Press Continue when ready to begin", 40, 400);
 
         uiContext.font = '14px Roboto';
         uiContext.textAlign = 'right';
         uiContext.fillStyle = 'rgba(255, 152, 0, 1)';
-        uiContext.fillText("CONTINUE", 340, 345);
+        uiContext.fillText("CONTINUE", 340, 445);
     };
 
     uiLayer.checkCollision = function(mouse) {
@@ -488,16 +500,75 @@ GomokuGame.uiLayer = (function() {
 
         uiElements['nameBg'] = Globals.createDecor(
             'nameBg', 'rectangle', uiContext,
-            20, 255, 340, 110,
+            20, 255, 340, 120,
             'rgba(255, 255, 255, 1)', 1, 'rgba(0, 0, 0, 0.87)');
 
+        uiElements['nameBigBg'] = Globals.createDecor(
+            'nameBg', 'rectangle', uiContext,
+            20, 255, 340, 210,
+            'rgba(255, 255, 255, 1)', 1, 'rgba(0, 0, 0, 0.87)');
+
+        uiElements['AIrOn'] = Globals.createDecor(
+            'AIrOn', 'rectangle', uiContext,
+            290, 350, 30, 10,
+            'rgba(275, 154, 30, 1)', 0, 'rgba(0, 0, 0, 0)');
+
+        uiElements['AIcOna'] = Globals.createDecor(
+            'AIcOna', 'circle', uiContext,
+            320, 355, 5, 5,
+            'rgba(275, 154, 30, 1)', 0, 'rgba(0, 0, 0, 0)');
+
+        uiElements['AIcOnb'] = Globals.createDecor(
+            'AIcOnb', 'circle', uiContext,
+            290, 355, 10, 10,
+            'rgba(245, 124, 0, 1)', 0, 'rgba(0, 0, 0, 0)');
+
+        uiElements['AIrOff'] = Globals.createDecor(
+            'AIrOff', 'rectangle', uiContext,
+            290, 350, 30, 10,
+            'rgba(150, 150, 150, 1)', 0, 'rgba(0, 0, 0, 0)');
+
+        uiElements['AIcOffa'] = Globals.createDecor(
+            'AIa', 'circle', uiContext,
+            290, 355, 5, 5,
+            'rgba(150, 150, 150, 1)', 0, 'rgba(0, 0, 0, 0)');
+
+        uiElements['AIcOffb'] = Globals.createDecor(
+            'AIb', 'circle', uiContext,
+            320, 355, 10, 10,
+            'rgba(120, 120, 120, 1)', 0, 'rgba(0, 0, 0, 0)');
+
+        uiButtons['AI'] = Globals.createButton(
+            'AI', 'rectangle', uiContext, 270, 340, 70, 30,
+            'rgba(0, 0, 0, 0)', 0, 'rgba(0, 0, 0, 0)',
+            260, 340, 90, 30, true);
+
+        uiButtons['AI']['action'] = function() {
+            uiContext.fillStyle= "white";
+            uiContext.fillRect(272, 343, 65, 22);
+            if (flag === false) {
+                Globals.draw(uiElements['AIrOn']);
+                Globals.draw(uiElements['AIcOna']);
+                Globals.draw(uiElements['AIcOnb']);
+                Globals.aiSide = [false, true];
+                flag = true;
+            } else {
+                Globals.draw(uiElements['AIrOff']);
+                Globals.draw(uiElements['AIcOffa']);
+                Globals.draw(uiElements['AIcOffb']);
+                Globals.aiSide = [false, false];
+                flag = false;
+            }
+        };
+
         uiButtons['continue'] = Globals.createButton(
-            'continue', 'rectangle', uiContext, 260, 325, 90, 30,
+            'continue', 'rectangle', uiContext, 260, 425, 90, 30,
             'rgba(0, 0, 0, 0)', 1, 'rgba(0, 0, 0, 0.54)',
-            260, 325, 90, 30, true);
+            260, 425, 90, 30, true);
 
         uiButtons['continue']['action'] = function() {
             uiButtons['continue'].active = false;
+            uiButtons['AI'].active = false;
             var length;
             var i;
             uiContext.clearRect(0, 100, 380, uiCanvas.height - 160);
@@ -505,17 +576,34 @@ GomokuGame.uiLayer = (function() {
         };
 
         uiButtons['again'] = Globals.createButton(
-            'Play Again?', 'rectangle', uiContext, 260, 325, 90, 30,
+            'Play Again?', 'rectangle', uiContext, 260, 335, 90, 30,
             'rgba(0, 0, 0, 0)', 1, 'rgba(0, 0, 0, 0.54)',
-            260, 325, 90, 30, false);
+            260, 335, 90, 30, false);
 
         uiButtons['again']['action'] = function() {
+            uiButtons['again'].active = false;
             var length;
             var i;
             GomokuGame.restart();
             uiContext.clearRect(0, 100, 380, uiCanvas.height - 160);
             Globals.gameActive = true;
         };
+
+        uiButtons['change'] = Globals.createButton(
+            'change', 'rectangle', uiContext, 30, 335, 90, 30,
+            'rgba(0, 0, 0, 0)', 1, 'rgba(0, 0, 0, 0.54)',
+            30, 335, 90, 30, false);
+
+        uiButtons['change']['action'] = function() {
+            Globals.aiSide = [false, false];
+            flag = false;
+            uiButtons['change'].active = false;
+            uiButtons['again'].active = false;
+            uiContext.clearRect(0, 100, 380, uiCanvas.height - 160);
+            GomokuGame.restart();
+            displayWelcome();
+        };
+
 
         // uiButtons['undo'] = Globals.createButton(
         //     'undo', 'rectangle', uiContext, 260, 380, 90, 30,

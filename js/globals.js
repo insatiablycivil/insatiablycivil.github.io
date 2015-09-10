@@ -30,7 +30,7 @@ var Globals = (function() {
 
     Globals.gameActive = false;
     Globals.blacktoMove = true;
-    Globals.aiSide = [false, true];
+    Globals.aiSide = [false, false];
 
     Globals.initialise = function() {
 
@@ -194,6 +194,7 @@ var GomokuGame = (function() {
     };
 
     GomokuGame.restart = function() {
+        Globals.blacktoMove = true;
         GomokuGame.contentLayer.restart();
         GomokuGame.ai.restart();
     };
