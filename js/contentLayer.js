@@ -2,8 +2,11 @@ GomokuGame.contentLayer = (function() {
     var contentLayer = {};
     var contentCanvas = document.getElementById("contentLayer");
     var contentContext = contentCanvas.getContext('2d');
+    var uiCanvas = document.getElementById("uiLayer");
+    var uiContext = uiCanvas.getContext('2d');
     var contentElements = [];
     var pieces = [];
+    var ghosty = 0;;
     var moves = [];
     var black = 'rgba(38, 50, 56, 1)';
     var orange = 'rgba(245, 124, 0, 1)';
@@ -91,7 +94,7 @@ GomokuGame.contentLayer = (function() {
         }
     };
 
-    contentLayer.checkCollision = function(mouse) {
+    contentLayer.checkCollision = function(mouse, ghost) {
         var i;
         var length;
         var pieceHit = false;
@@ -119,7 +122,28 @@ GomokuGame.contentLayer = (function() {
             if (pieceHit === false) {
                 column = Math.round((mouse.x - 50) / 20);
                 row = Math.round((mouse.y - 150) / 20);
-                contentLayer.makeMove(column, row);
+                if (ghost === false) {
+                    contentLayer.makeMove(column, row);
+                } else {
+                    if (Globals.blacktoMove === true) {
+                        colour = 'rgba(0, 0, 0, 0.54)';
+                    } else {
+                         colour = 'rgba(245, 124, 0, 0.54)';
+                    }
+                    if (ghosty === 0) {
+                        ghosty = Globals.createDecor(
+                                'ghost', 'circle', uiContext,
+                                (column * 20 + 50), (row * 20 + 150), 9, 9,
+                                colour, 0, 'rgba(0, 0, 0, 0)');
+                    } else if (!(ghosty.x === (column * 20 - 50) &&
+                        ghosty.y === (row * 20 - 150))) {
+                        uiContext.clearRect(ghosty.x - 10, ghosty.y - 10, 20, 20);
+                        ghosty.x = (column * 20 + 50);
+                        ghosty.y = (row * 20 + 150);
+                        ghosty.colour = colour;
+                    }
+                    Globals.draw(ghosty);
+                }
             }
         }
     };
@@ -130,6 +154,8 @@ GomokuGame.contentLayer = (function() {
             } else {
                 colour = orange;
             }
+
+            uiContext.clearRect(ghosty.x - 10, ghosty.y - 10, 20, 20);
 
             pieces[column][row] =
                 Globals.createPiece(

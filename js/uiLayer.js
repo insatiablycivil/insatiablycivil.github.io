@@ -4,7 +4,7 @@ GomokuGame.uiLayer = (function() {
     var uiContext = uiCanvas.getContext('2d');
     var uiElements = {};
     var uiButtons = {};
-    var flag = false;
+    var flag = true;
 
     var createHowToPlay = (function() {
         // Creates how to play section on right side
@@ -437,9 +437,9 @@ GomokuGame.uiLayer = (function() {
         Globals.draw(uiElements['greyOut']);
         Globals.draw(uiElements['nameHeader']);
         Globals.draw(uiElements['nameBigBg']);
-        Globals.draw(uiElements['AIrOff']);
-        Globals.draw(uiElements['AIcOffa']);
-        Globals.draw(uiElements['AIcOffb']);
+        Globals.draw(uiElements['AIrOn']);
+        Globals.draw(uiElements['AIcOna']);
+        Globals.draw(uiElements['AIcOnb']);
 
         Globals.draw(uiButtons['continue']);
         uiButtons['continue'].active = true;
@@ -595,8 +595,8 @@ GomokuGame.uiLayer = (function() {
             30, 335, 90, 30, false);
 
         uiButtons['change']['action'] = function() {
-            Globals.aiSide = [false, false];
-            flag = false;
+            Globals.aiSide = [false, true];
+            flag = true;
             uiButtons['change'].active = false;
             uiButtons['again'].active = false;
             uiContext.clearRect(0, 100, 380, uiCanvas.height - 160);
