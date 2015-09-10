@@ -440,6 +440,12 @@ GomokuGame.uiLayer = (function() {
         uiContext.textAlign = 'left';
         uiContext.fillStyle = 'rgba(255, 255, 255, 1)';
         uiContext.fillText("Welcome!", 35, 243);
+        
+        uiContext.font = 'bold 14px Roboto';
+        uiContext.textAlign = 'left';
+        uiContext.fillStyle = 'rgba(0, 0, 0, .54)';
+        uiContext.fillText("Hello! Click to Play", 60, 290);
+        uiContext.fillText("Instructions are on the right.", 60, 310);
 
         uiContext.font = 'bold 14px Roboto';
         uiContext.textAlign = 'right';
