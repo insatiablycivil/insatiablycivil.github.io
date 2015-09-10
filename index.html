@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Gomoku Implementation</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+  <nav class="orange lighten-1" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Gomoku Game</a>
+    </div>
+  </nav>
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center orange-text">Gomoku Game</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">Using JavaScript and the &ltCanvas> element in HTML5</h5>
+      </div>
+      <div class="row center">
+        <div id="game" style="position: relative; font-family: 'Roboto', sans-serif;" class="row center">
+          <canvas id="backgroundLayer" width="680" height="580"
+              style="position: absolute; margin-left: auto; margin-right: auto; left: 0px; right: 0px; top: 0px; z-index: 0;">
+          </canvas>     
+          <canvas id="contentLayer" width="680" height="580"
+              style="position: absolute; margin-left: auto; margin-right: auto; left: 0px; right: 0px; top: 0px; z-index: 1;">
+          </canvas>
+          <canvas id="uiLayer" width="680" height="580"
+              style="position: absolute; margin-left: auto; margin-right: auto; left: 0px; right: 0px; top: 0px; z-index: 2;">
+            Your browser does support the canvas feature in javascript.\n
+            Please try a different browser.
+          </canvas>
+          <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        </div>
+      </div>
+      <br><br>
+
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="section">
+
+      <!--   Icon Section   -->
+      <div class="row">
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center orange-text"><i class="material-icons">content_copy</i></h2>
+            <h5 class="center">Uses Three Canvas Elements</h5>
+
+            <p class="light">Each place above the other. One to contain the background elements, the next contains the pieces, and the top layer contains all buttons and other IO.</p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center orange-text"><i class="material-icons">settings</i></h2>
+            <h5 class="center">Uses Alpha Beta Algorithm</h5>
+
+            <p class="light">An optmisation of the MiniMax Algorithm, the Alpha Beta Algorithm makes the assumption that each side will make only the best move available to them. This allows it to dismiss suboptimal moves as soon as superior alternatives are found.</p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center orange-text"><i class="material-icons">link</i></h2>
+            <h5 class="center">This site is using Materialize</h5>
+
+            <p class="light">This webpage is using the <a href="http://materializecss.com/">Materialize Template</a> to emulate Google's <a href="https://www.google.com/design/spec/material-design">Material Design</a>. I butchered it, it looks much nicer in its default; go check it out.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <br><br>
+
+    <div class="section">
+
+    </div>
+  </div>
+
+
+
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="../../bin/materialize.js"></script>
+  <script src="js/init.js"></script>
+    <script src="js/globals.js"></script>
+    <script src="js/backgroundLayer.js"></script>
+    <script src="js/contentLayer.js"></script>
+    <script src="js/uiLayer.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/initialise.js"></script>
+
+  </body>
+</html>
