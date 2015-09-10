@@ -444,7 +444,7 @@ GomokuGame.uiLayer = (function() {
         uiContext.font = 'bold 14px Roboto';
         uiContext.textAlign = 'right';
         uiContext.fillStyle = 'rgba(255, 152, 0, 1)';
-        uiContext.fillText("Continue", 340, 345);
+        uiContext.fillText("CONTINUE", 340, 345);
     };
 
     uiLayer.checkCollision = function(mouse) {
